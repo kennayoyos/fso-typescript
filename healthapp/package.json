@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "tsc": "tsc",
-    "calculateBmi": "tsc && node calculateBmi.ts"
+    "calculateBmi": "tsc && node calculateBmi.ts",
+    "calculateExercises": "tsc && node exerciseCalculator.ts"
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
