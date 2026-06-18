@@ -1,7 +1,11 @@
+interface BMIValues {
+  height: number;
+  weight: number;
+}
+
 const calculateBmi = (height: number, weight: number): string => {
-  if (height <= 0 || weight <= 0) {
-    throw new Error("Height and weight must be positive numbers.");
-  }
+  if (height <= 0 || weight <= 0) throw new Error("Height and weight must be positive numbers.");
+  if (height < 10) throw new Error("Height must be in centimeters");
 
   const heightInMeters = height / 100;
   const bmi = weight / (heightInMeters * heightInMeters);
@@ -16,5 +20,27 @@ const calculateBmi = (height: number, weight: number): string => {
   else return "Obese (Class III)";
 };
 
-console.log(calculateBmi(180, 74));
+const parseBMIArguments = (args: string[]): BMIValues => {
+  if (args.length !== 4) {
+    throw new Error("Invalid number of arguments. Please provide height and weight.");
+  }
+
+  const height = Number(args[2]);
+  const weight = Number(args[3]);
+
+  if (isNaN(height) || isNaN(weight)) throw new Error("Provided values are not valid numbers.");
+
+  return { height, weight };
+};
+
+try {
+  const { height, weight } = parseBMIArguments(process.argv);
+  console.log(calculateBmi(height, weight));
+} catch (error: unknown) {
+  let errorMessage = "Something went wrong.";
+  if (error instanceof Error) {
+    errorMessage += " Error: " + error.message;
+  }
+  console.error(errorMessage);
+}
 
