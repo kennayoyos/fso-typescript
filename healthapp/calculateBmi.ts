@@ -33,14 +33,18 @@ const parseBMIArguments = (args: string[]): BMIValues => {
   return { height, weight };
 };
 
-try {
-  const { height, weight } = parseBMIArguments(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong.";
-  if (error instanceof Error) {
-    errorMessage += " Error: " + error.message;
+if (process.argv[1] === import.meta.filename) {
+  try {
+    const { height, weight } = parseBMIArguments(process.argv);
+    console.log(calculateBmi(height, weight));
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong.";
+    if (error instanceof Error) {
+      errorMessage += " Error: " + error.message;
+    }
+    console.error(errorMessage);
   }
-  console.error(errorMessage);
 }
+
+export default calculateBmi;
 
