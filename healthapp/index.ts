@@ -1,11 +1,11 @@
-import express from "express";
+import express, { Request, Response } from "express";
 
-import calculateBmi from "./calculateBmi.ts";
+import { calculateBmi } from "./calculateBmi.ts";
 
 const app = express();
 const PORT = 3003;
 
-app.get("/bmi", (req, res) => {
+app.get("/bmi", (req: Request, res: Response) => {
   const { height, weight } = req.query;
 
   try {
@@ -22,7 +22,13 @@ app.get("/bmi", (req, res) => {
     const bmiResult = calculateBmi(heightNum, weightNum);
     res.json({ weight: weightNum, height: heightNum, bmi: bmiResult });
   } catch (error: unknown) {
-    res.status(400).json({ error: "malformatted parameters" });
+    const errorObject = {
+      error: "malformatted parameters",
+    };
+
+    if (error instanceof Error) errorObject.error += error.message;
+
+    res.status(400).json(errorObject);
   }
 });
 

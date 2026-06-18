@@ -3,7 +3,7 @@ interface BMIValues {
   weight: number;
 }
 
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   if (height <= 0 || weight <= 0) throw new Error("Height and weight must be positive numbers.");
   if (height < 10) throw new Error("Height must be in centimeters");
 
@@ -45,6 +45,3 @@ if (process.argv[1] === import.meta.filename) {
     console.error(errorMessage);
   }
 }
-
-export default calculateBmi;
-
