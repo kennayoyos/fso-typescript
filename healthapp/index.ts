@@ -8,16 +8,14 @@ const PORT = 3000;
 
 app.use(express.json());
 
+app.get("/hello", (_req, res) => res.status(200).send("Hello Full Stack!"));
+
 app.get("/bmi", (req, res) => {
   const { height, weight } = req.query;
 
   try {
-    if (typeof height !== "string" || typeof weight !== "string") {
-      throw new Error("Height and weight must be provided as query parameters.");
-    }
-    if (isNaN(Number(height)) || isNaN(Number(weight))) {
-      throw new Error("Height and weight must be valid numbers.");
-    }
+    if (!height || !weight || isNaN(Number(height)) || isNaN(Number(weight)))
+      res.status(400).json({ error: "malformatted parameters" });
 
     const heightNum = Number(height);
     const weightNum = Number(weight);
@@ -25,13 +23,9 @@ app.get("/bmi", (req, res) => {
     const bmiResult = calculateBmi(heightNum, weightNum);
     res.json({ weight: weightNum, height: heightNum, bmi: bmiResult });
   } catch (error: unknown) {
-    const errorObject = {
-      error: "malformatted parameters",
-    };
-
-    if (error instanceof Error) errorObject.error += error.message;
-
-    res.status(400).json(errorObject);
+    if (error instanceof Error) {
+      res.status(500).send(error.message);
+    }
   }
 });
 
