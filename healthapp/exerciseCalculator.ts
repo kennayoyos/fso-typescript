@@ -8,12 +8,12 @@ interface Result {
   average: number;
 }
 
-interface ExerciseValues {
+export type ExerciseValues = {
   exerciseHours: number[];
   target: number;
-}
+};
 
-const calculateExercises = (exerciseHours: number[], target: number): Result => {
+export const calculateExercises = (exerciseHours: number[], target: number): Result => {
   // Edge cases
   if (exerciseHours.length === 0) throw new Error("No exercise hours provided");
   if (target <= 0) throw new Error("Target must be greater than 0");
@@ -25,7 +25,7 @@ const calculateExercises = (exerciseHours: number[], target: number): Result => 
   const rating = success ? 3 : average >= target * 0.5 ? 2 : 1;
   const ratingDescription =
     rating === 1
-      ? "You need to work harder"
+      ? "bad"
       : rating === 2
         ? "Not too bad but could be better"
         : "Great job, you met your target!";
