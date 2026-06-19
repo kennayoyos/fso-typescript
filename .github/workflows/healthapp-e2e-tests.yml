@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: "24"
+          node-version: "24.15.0"
 
       - name: Install healthapp dependencies
         working-directory: ./healthapp
@@ -28,50 +28,17 @@ jobs:
       - name: Start healthapp server
         working-directory: ./healthapp
         run: |
-          npm start > server.log 2>&1 &
+          npm start &
           echo $! > server.pid
-
-      - name: Wait for healthapp readiness
-        working-directory: ./healthapp
-        run: |
-          for i in {1..60}; do
-            if curl -fsS http://127.0.0.1:3000/hello > /dev/null; then
-              echo "Server is ready"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "Server failed to start in 60s"
-          cat server.log || true
-          exit 1
+          sleep 3
 
       - name: Install test dependencies
         working-directory: ./healthapp-tests
         run: npm install
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('healthapp-tests/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      - name: Inspect Playwright cache and disk
-        run: |
-          df -h
-          du -sh ~/.cache/ms-playwright || true
-          ls -la ~/.cache/ms-playwright || true
-
-      - name: Clear Playwright browser cache for a clean retry
-        run: rm -rf ~/.cache/ms-playwright
-
       - name: Install Playwright browsers
         working-directory: ./healthapp-tests
-        timeout-minutes: 20
-        env:
-          DEBUG: pw:install,pw:browser*
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Run e2e tests
         working-directory: ./healthapp-tests
