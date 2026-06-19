@@ -28,9 +28,22 @@ jobs:
       - name: Start healthapp server
         working-directory: ./healthapp
         run: |
-          npm start &
+          npm start > server.log 2>&1 &
           echo $! > server.pid
-          sleep 3
+
+      - name: Wait for healthapp readiness
+        working-directory: ./healthapp
+        run: |
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/hello > /dev/null; then
+              echo "Server is ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server failed to start in 60s"
+          cat server.log || true
+          exit 1
 
       - name: Install test dependencies
         working-directory: ./healthapp-tests
